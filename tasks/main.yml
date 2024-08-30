@@ -1,13 +1,23 @@
 ---
 
-- name: Install the cgroup packages
+- name: Install the cgroup packages (Redhat)
   yum:
     name:
       - libcgroup
       - libcgroup-tools
     state: present
+  when: ansible_os_family == "Redhat"
 
-- name: enable and start cgroup services
+- name: Install the cgroup packages (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name:
+      - libcgroup1
+      - cgroup-tools
+    state: present
+    cache_valid_time: 600
+  when: ansible_os_family == "Debian"
+
+- name: Enable and start cgroup services
   service:
     name: "{{ item }}"
     enabled: true
